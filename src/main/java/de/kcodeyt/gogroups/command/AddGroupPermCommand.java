@@ -35,6 +35,10 @@ public class AddGroupPermCommand extends Command {
             return commandOutput.fail(goGroups.getFailPrefix() + " Group " + group + " does not exists.");
 
         GroupConfig groupConfig = goGroups.getGroupManager().getGroupsConfig().getGroupConfig(group);
+
+        if(groupConfig.getPermissions().contains(permission))
+            return commandOutput.fail(goGroups.getFailPrefix() + " Group " + group + " already has the permission " + permission + ".");
+
         groupConfig.getPermissions().add(permission);
 
         goGroups.getGroupManager().save();
