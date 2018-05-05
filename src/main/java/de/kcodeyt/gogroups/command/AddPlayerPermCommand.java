@@ -1,7 +1,6 @@
 package de.kcodeyt.gogroups.command;
 
 import de.kcodeyt.gogroups.GoGroups;
-import de.kcodeyt.gogroups.config.GroupConfig;
 import de.kcodeyt.gogroups.config.PlayerConfig;
 import io.gomint.command.Command;
 import io.gomint.command.CommandOutput;
@@ -36,6 +35,10 @@ public class AddPlayerPermCommand extends Command {
             return commandOutput.fail(goGroups.getFailPrefix() + " Player " + target.getName() + " does not exists.");
 
         PlayerConfig playerConfig = goGroups.getPlayerManager().getPlayerConfig(target.getName());
+
+        if(playerConfig.getPermissions().contains(permission))
+            return commandOutput.fail(goGroups.getFailPrefix() + " Player " + target.getName() + " already has the permission " + permission + ".");
+
         playerConfig.getPermissions().add(permission);
 
         goGroups.getScheduler().executeAsync(() -> {

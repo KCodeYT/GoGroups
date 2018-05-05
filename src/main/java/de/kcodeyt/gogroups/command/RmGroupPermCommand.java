@@ -41,7 +41,7 @@ public class RmGroupPermCommand extends Command {
 
         goGroups.getGroupManager().save();
 
-        return commandOutput.success(goGroups.getSuccessPrefix() + " Permission " + permission + " successfully removed to group " + group + ".");
+        return commandOutput.success(goGroups.getSuccessPrefix() + " Permission " + permission + " successfully removed from group " + group + ".");
     }
 
 }
