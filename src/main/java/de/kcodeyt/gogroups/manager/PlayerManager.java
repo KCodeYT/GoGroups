@@ -71,7 +71,7 @@ public class PlayerManager {
 
             this.goGroups.getScheduler().executeAsync(() -> {
                 try {
-                    playerConfig.save(new File(this.playerDirectory, playerName));
+                    playerConfig.save(new File(this.playerDirectory, playerName + ".yml"));
                 } catch(InvalidConfigurationException e) {
                     e.printStackTrace();
                 }

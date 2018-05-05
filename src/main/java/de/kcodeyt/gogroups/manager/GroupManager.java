@@ -66,8 +66,19 @@ public class GroupManager {
             if(this.getGroupsConfig().getGroupConfig(groupName) == null) {
                 GroupConfig groupConfig = new GroupConfig();
                 groupConfig.setName(groupName);
-                groupConfig.setChatFormat(chatFormat);
-                groupConfig.setNameTag(nameTag);
+
+                {
+                    if(chatFormat == null)
+                        groupConfig.setChatFormat(groupConfig.getChatFormat().replace("Guest", groupName));
+                    else
+                        groupConfig.setChatFormat(chatFormat);
+
+                    if(nameTag == null)
+                        groupConfig.setNameTag(groupConfig.getNameTag().replace("Guest", groupName));
+                    else
+                        groupConfig.setNameTag(nameTag);
+                }
+
                 groupConfig.setPermissions(permissions);
 
                 this.getGroupsConfig().getGroups().add(groupConfig);

@@ -13,10 +13,19 @@ import lombok.Getter;
 public class GoGroups extends Plugin {
 
     @Getter
+    private static GoGroups goGroupsInstance;
+
+    @Getter
     private GroupManager groupManager;
 
     @Getter
     private PlayerManager playerManager;
+
+    @Getter
+    private String successPrefix;
+
+    @Getter
+    private String failPrefix;
 
     @Override
     public void onInstall() {
@@ -24,11 +33,16 @@ public class GoGroups extends Plugin {
     }
 
     private void init() {
+        GoGroups.goGroupsInstance = this;
+
         if(!this.getDataFolder().exists())
             this.getDataFolder().mkdirs();
 
         this.groupManager = new GroupManager(this);
         this.playerManager = new PlayerManager(this);
+
+        this.successPrefix = "§6GoGroups §8§l»§r§a ";
+        this.failPrefix = "§6GoGroups §8§l»§r§c ";
 
         this.registerListener(new PlayerListener(this));
     }
