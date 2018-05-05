@@ -14,7 +14,7 @@ import java.util.Map;
 @Description("Adds a group")
 @Permission("gogroups.cmd.addgroup")
 @Overload({
-        @Parameter(name = "group", validator = StringValidator.class, arguments = {"[a-zA-Z0-9]"})
+        @Parameter(name = "group", validator = StringValidator.class, arguments = {".*"})
 })
 public class AddGroupCommand extends Command {
 

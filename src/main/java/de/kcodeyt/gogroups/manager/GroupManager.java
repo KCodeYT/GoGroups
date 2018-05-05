@@ -34,11 +34,7 @@ public class GroupManager {
         if(!this.configFile.exists()) {
             this.groupsConfig.getGroups().add(new GroupConfig());
 
-            try {
-                this.groupsConfig.save(this.configFile);
-            } catch(InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
+            this.save();
         }
 
         try {
@@ -83,13 +79,7 @@ public class GroupManager {
 
                 this.getGroupsConfig().getGroups().add(groupConfig);
 
-                this.goGroups.getScheduler().executeAsync(() -> {
-                    try {
-                        this.getGroupsConfig().save(this.configFile);
-                    } catch(InvalidConfigurationException e) {
-                        e.printStackTrace();
-                    }
-                });
+                this.save();
             }
 
             io.gomint.permission.Group permissionGroup = this.goGroups.getServer().getGroupManager().getOrCreateGroup(groupName);
@@ -101,19 +91,23 @@ public class GroupManager {
         }
     }
 
+    public void save() {
+        this.goGroups.getScheduler().executeAsync(() -> {
+            try {
+                this.getGroupsConfig().save(this.configFile);
+            } catch(InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public void removeGroup(String groupName) {
         if(this.groupExists(groupName)) {
             this.getGroups().remove(groupName);
 
             this.getGroupsConfig().getGroups().remove(this.getGroupsConfig().getGroupConfig(groupName));
 
-            this.goGroups.getScheduler().executeAsync(() -> {
-                try {
-                    this.getGroupsConfig().save(this.configFile);
-                } catch(InvalidConfigurationException e) {
-                    e.printStackTrace();
-                }
-            });
+            this.save();
         }
     }
 
