@@ -29,7 +29,7 @@ public class SetGroupCommand extends Command {
         String group = (String) argsMap.get("group");
 
         if(target == null || group == null || group.equals(""))
-            return commandOutput.fail("Usage: /addplayerperm <target> <group>");
+            return commandOutput.fail("Usage: /setgroup <target> <group>");
 
         if(!goGroups.getPlayerManager().playerExists(target.getName()))
             return commandOutput.fail(goGroups.getFailPrefix() + " Player " + target.getName() + " does not exists.");
