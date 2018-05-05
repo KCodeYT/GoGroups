@@ -31,6 +31,16 @@ public class GroupManager {
 
         this.configFile = new File(this.goGroups.getDataFolder(), "groups.yml");
 
+        if(!this.configFile.exists()) {
+            this.groupsConfig.getGroups().add(new GroupConfig());
+
+            try {
+                this.groupsConfig.save(this.configFile);
+            } catch(InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             this.groupsConfig.init(this.configFile);
         } catch(InvalidConfigurationException e) {

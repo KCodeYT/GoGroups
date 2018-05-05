@@ -30,23 +30,32 @@ public class PlayerManager {
     }
 
     public void loadPlayer(String playerName) {
+        File playerFile = new File(this.playerDirectory, playerName + ".yml");
+
         PlayerConfig playerConfig;
         if(this.playerExists(playerName)) {
             playerConfig = this.playerConfigs.get(playerName);
+
+            this.goGroups.getScheduler().executeAsync(() -> {
+                try {
+                    playerConfig.load(playerFile);
+                } catch(InvalidConfigurationException e) {
+                    e.printStackTrace();
+                }
+            });
         } else {
-            playerConfig = new PlayerConfig();
-            playerConfig.setName("name");
-            playerConfig.setGroup("group");
-            playerConfig.setPermissions(new ArrayList<>());
+            playerConfig = new PlayerConfig(playerName, this.goGroups.getGroupManager().getGroupsConfig().getDefaultGroup(), new ArrayList<>());
+
+            this.goGroups.getScheduler().executeAsync(() -> {
+                try {
+                    playerConfig.init(playerFile);
+                } catch(InvalidConfigurationException e) {
+                    e.printStackTrace();
+                }
+            });
         }
 
-        this.goGroups.getScheduler().executeAsync(() -> {
-            try {
-                playerConfig.load(new File(this.playerDirectory, playerName));
-            } catch(InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-        });
+        this.playerConfigs.put(playerName, playerConfig);
     }
 
     public void updatePlayer(String playerName, String groupName, List<String> permissions) {
@@ -68,6 +77,12 @@ public class PlayerManager {
                 }
             });
         }
+    }
+
+    public PlayerConfig getPlayerConfig(String playerName) {
+        if(this.playerExists(playerName))
+            return this.playerConfigs.get(playerName);
+        return null;
     }
 
 }
