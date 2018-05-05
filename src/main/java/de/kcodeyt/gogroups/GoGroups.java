@@ -29,7 +29,10 @@ public class GoGroups extends Plugin {
 
     @Override
     public void onInstall() {
+        this.getLogger().info("Installing GoGroups(Author KCodeYT, Version " + this.getVersion() + ")...");
+        this.getLogger().info("Initialize GoGroups.");
         this.init();
+        this.getLogger().info("Successfully installed GoGroups!");
     }
 
     private void init() {
@@ -49,7 +52,7 @@ public class GoGroups extends Plugin {
 
     @Override
     public void onUninstall() {
-
+        this.getLogger().info("Uninstalled GoGroups.");
     }
 
 }
