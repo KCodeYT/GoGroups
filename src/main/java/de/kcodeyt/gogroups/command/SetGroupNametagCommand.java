@@ -28,7 +28,7 @@ public class SetGroupNametagCommand extends Command {
         String nameTag = (String) argsMap.get("nameTag");
 
         if(group == null || group.equals("") || nameTag == null || nameTag.equals(""))
-            return commandOutput.fail("Usage: /setgroupchat <group> <chatFormat>");
+            return commandOutput.fail("Usage: /setgroupnametag <group> <chatFormat>");
 
         if(!goGroups.getGroupManager().groupExists(group))
             return commandOutput.fail(goGroups.getFailPrefix() + " Group " + group + " does not exists.");
