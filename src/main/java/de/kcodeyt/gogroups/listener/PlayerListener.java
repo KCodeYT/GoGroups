@@ -41,6 +41,7 @@ public class PlayerListener implements EventListener {
 
             player.setNameTag(nameTag);
             player.setDisplayName(nameTag);
+            player.getPermissionManager().addGroup(group.getPermissionGroup());
         }
     }
 
