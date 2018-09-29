@@ -10,8 +10,8 @@
 
     <repositories>
         <repository>
-            <id>gomint-public</id>
-            <url>https://repo.janmm14.de/repository/public/</url>
+            <id>gomint-repo1</id>
+            <url>https://repo.gomint.io/content/groups/public/</url>
         </repository>
     </repositories>
 
