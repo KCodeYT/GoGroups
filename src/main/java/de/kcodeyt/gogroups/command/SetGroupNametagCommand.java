@@ -4,10 +4,10 @@ import de.kcodeyt.gogroups.GoGroups;
 import de.kcodeyt.gogroups.config.GroupConfig;
 import io.gomint.command.Command;
 import io.gomint.command.CommandOutput;
+import io.gomint.command.CommandSender;
 import io.gomint.command.annotation.*;
 import io.gomint.command.validator.StringValidator;
 import io.gomint.command.validator.TextValidator;
-import io.gomint.entity.EntityPlayer;
 
 import java.util.Map;
 
@@ -21,7 +21,7 @@ import java.util.Map;
 public class SetGroupNametagCommand extends Command {
 
     @Override
-    public CommandOutput execute(EntityPlayer player, String s, Map<String, Object> argsMap) {
+    public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
         CommandOutput commandOutput = new CommandOutput();
         GoGroups goGroups = GoGroups.getGoGroupsInstance();
         String group = (String) argsMap.get("group");

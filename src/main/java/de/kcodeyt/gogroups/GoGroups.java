@@ -9,7 +9,7 @@ import io.gomint.plugin.Version;
 import lombok.Getter;
 
 @PluginName("GoGroups")
-@Version(major = 1, minor = 1)
+@Version(major = 1, minor = 2)
 public class GoGroups extends Plugin {
 
     @Getter
@@ -29,7 +29,6 @@ public class GoGroups extends Plugin {
 
     @Override
     public void onInstall() {
-        this.getLogger().info("Installing GoGroups(Author KCodeYT, Version " + this.getVersion() + ")...");
         this.getLogger().info("Initialize GoGroups.");
         this.init();
         this.getLogger().info("Successfully installed GoGroups!");

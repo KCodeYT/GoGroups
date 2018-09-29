@@ -2,14 +2,12 @@ package de.kcodeyt.gogroups.command;
 
 import de.kcodeyt.gogroups.GoGroups;
 import de.kcodeyt.gogroups.config.GroupConfig;
-import de.kcodeyt.gogroups.misc.Group;
 import io.gomint.command.Command;
 import io.gomint.command.CommandOutput;
+import io.gomint.command.CommandSender;
 import io.gomint.command.annotation.*;
 import io.gomint.command.validator.StringValidator;
-import io.gomint.entity.EntityPlayer;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 @Name("addgroupperm")
@@ -22,7 +20,7 @@ import java.util.Map;
 public class AddGroupPermCommand extends Command {
 
     @Override
-    public CommandOutput execute(EntityPlayer player, String s, Map<String, Object> argsMap) {
+    public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
         CommandOutput commandOutput = new CommandOutput();
         GoGroups goGroups = GoGroups.getGoGroupsInstance();
         String group = (String) argsMap.get("group");
