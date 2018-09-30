@@ -1,6 +1,6 @@
 # GoGroups
 
-GoGroups is a Group managing plugin for GoMint (Minecraft BE)
+GoGroups is a Group managing plugin for GoMint (Server software for Minecraft BE)
 
 # Downloads
 
