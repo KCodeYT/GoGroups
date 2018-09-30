@@ -40,25 +40,21 @@ public class PlayerManager {
         if(this.playerExists(playerName)) {
             playerConfig = this.playerConfigs.get(playerName);
 
-            this.goGroups.getScheduler().executeAsync(() -> {
-                try {
-                    playerConfig.load(playerFile);
-                    playerConfigConsumer.accept(playerConfig);
-                } catch(InvalidConfigurationException e) {
-                    e.printStackTrace();
-                }
-            });
+            try {
+                playerConfig.load(playerFile);
+                playerConfigConsumer.accept(playerConfig);
+            } catch(InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
         } else {
             playerConfig = new PlayerConfig(playerName, this.goGroups.getGroupManager().getGroupsConfig().getDefaultGroup(), new ArrayList<>());
 
-            this.goGroups.getScheduler().executeAsync(() -> {
-                try {
-                    playerConfig.init(playerFile);
-                    playerConfigConsumer.accept(playerConfig);
-                } catch(InvalidConfigurationException e) {
-                    e.printStackTrace();
-                }
-            });
+            try {
+                playerConfig.init(playerFile);
+                playerConfigConsumer.accept(playerConfig);
+            } catch(InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
         }
 
         this.playerConfigs.put(playerName, playerConfig);
