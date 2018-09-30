@@ -24,35 +24,32 @@ public class PlayerListener implements EventListener {
     public void onJoin(PlayerJoinEvent event) {
         EntityPlayer player = event.getPlayer();
 
-        this.goGroups.getPlayerManager().loadPlayer(player.getName());
-        PlayerConfig playerConfig = this.goGroups.getPlayerManager().getPlayerConfig(player.getName());
+        this.goGroups.getPlayerManager().loadPlayer(player, playerConfig -> {
+            String groupName = playerConfig.getGroup();
+            List<String> permissions = playerConfig.getPermissions();
 
-        String groupName = playerConfig.getGroup();
-        List<String> permissions = playerConfig.getPermissions();
+            for(String permission : permissions)
+                player.getPermissionManager().setPermission(permission, true);
 
-        for(String permission : permissions)
-            player.getPermissionManager().setPermission(permission, true);
+            if(this.goGroups.getGroupManager().groupExists(groupName)) {
+                Group group = this.goGroups.getGroupManager().getGroups().get(groupName);
+                String nameTag = group.getNameTag().
+                        replace("%name%", player.getName()).
+                        replace("&", "§");
 
-        if(this.goGroups.getGroupManager().groupExists(groupName)) {
-            Group group = this.goGroups.getGroupManager().getGroups().get(groupName);
-            String nameTag = group.getNameTag().
-                    replace("%name%", player.getName()).
-                    replace("&", "§");
+                player.setNameTag(nameTag);
+                player.setDisplayName(nameTag);
+                player.getPermissionManager().addGroup(group.getPermissionGroup());
+            }
 
-            player.setNameTag(nameTag);
-            player.setDisplayName(nameTag);
-            player.getPermissionManager().addGroup(group.getPermissionGroup());
-        }
-
-        if(player.hasPermission("*"))
-            player.setOp(true);
+            if(player.hasPermission("*"))
+                player.setOp(true);
+        });
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        EntityPlayer player = event.getPlayer();
-
-        this.goGroups.getPlayerManager().updatePlayer(player.getName(), null, null);
+        this.goGroups.getPlayerManager().updatePlayer(event.getPlayer(), null, null);
     }
 
     @EventHandler

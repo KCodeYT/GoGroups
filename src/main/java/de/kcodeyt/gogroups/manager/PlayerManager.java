@@ -3,12 +3,14 @@ package de.kcodeyt.gogroups.manager;
 import de.kcodeyt.gogroups.GoGroups;
 import de.kcodeyt.gogroups.config.PlayerConfig;
 import io.gomint.config.InvalidConfigurationException;
+import io.gomint.entity.EntityPlayer;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class PlayerManager {
 
@@ -29,7 +31,9 @@ public class PlayerManager {
         return this.playerConfigs.containsKey(playerName);
     }
 
-    public void loadPlayer(String playerName) {
+    public void loadPlayer(EntityPlayer player, Consumer<PlayerConfig> playerConfigConsumer) {
+        String playerName = player.getName();
+
         File playerFile = new File(this.playerDirectory, playerName + ".yml");
 
         PlayerConfig playerConfig;
@@ -39,6 +43,7 @@ public class PlayerManager {
             this.goGroups.getScheduler().executeAsync(() -> {
                 try {
                     playerConfig.load(playerFile);
+                    playerConfigConsumer.accept(playerConfig);
                 } catch(InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
@@ -49,6 +54,7 @@ public class PlayerManager {
             this.goGroups.getScheduler().executeAsync(() -> {
                 try {
                     playerConfig.init(playerFile);
+                    playerConfigConsumer.accept(playerConfig);
                 } catch(InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
@@ -58,7 +64,9 @@ public class PlayerManager {
         this.playerConfigs.put(playerName, playerConfig);
     }
 
-    public void updatePlayer(String playerName, String groupName, List<String> permissions) {
+    public void updatePlayer(EntityPlayer player, String groupName, List<String> permissions) {
+        String playerName = player.getName();
+
         if(this.playerExists(playerName)) {
             PlayerConfig playerConfig = this.playerConfigs.get(playerName);
 
