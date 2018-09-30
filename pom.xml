@@ -6,7 +6,7 @@
 
     <groupId>de.kcodeyt</groupId>
     <artifactId>GoGroups</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <repositories>
         <repository>
