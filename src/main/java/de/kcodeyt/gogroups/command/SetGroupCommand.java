@@ -2,6 +2,7 @@ package de.kcodeyt.gogroups.command;
 
 import de.kcodeyt.gogroups.GoGroups;
 import de.kcodeyt.gogroups.config.PlayerConfig;
+import de.kcodeyt.gogroups.misc.Group;
 import io.gomint.command.Command;
 import io.gomint.command.CommandOutput;
 import io.gomint.command.CommandSender;
@@ -27,9 +28,9 @@ public class SetGroupCommand extends Command {
         CommandOutput commandOutput = new CommandOutput();
         GoGroups goGroups = GoGroups.getGoGroupsInstance();
         EntityPlayer target = (EntityPlayer) argsMap.get("target");
-        String group = (String) argsMap.get("group");
+        String groupName = (String) argsMap.get("group");
 
-        if(target == null || group == null || group.equals(""))
+        if(target == null || groupName == null || groupName.equals(""))
             return commandOutput.fail("Usage: /setgroup <target> <group>");
 
         if(!goGroups.getPlayerManager().playerExists(target.getName()))
@@ -37,10 +38,22 @@ public class SetGroupCommand extends Command {
 
         PlayerConfig playerConfig = goGroups.getPlayerManager().getPlayerConfig(target.getName());
 
-        if(!goGroups.getGroupManager().groupExists(group))
-            return commandOutput.fail(goGroups.getFailPrefix() + " Group " + group + " does not exists.");
+        if(!goGroups.getGroupManager().groupExists(groupName))
+            return commandOutput.fail(goGroups.getFailPrefix() + " Group " + groupName + " does not exists.");
 
-        playerConfig.setGroup(group);
+        Group currentGroup = goGroups.getGroupManager().getGroups().get(playerConfig.getGroup());
+        target.getPermissionManager().removeGroup(currentGroup.getPermissionGroup());
+
+        playerConfig.setGroup(groupName);
+
+        Group group = goGroups.getGroupManager().getGroups().get(groupName);
+        String nameTag = group.getNameTag().
+                replace("%name%", target.getName()).
+                replace("&", "§");
+
+        target.setNameTag(nameTag);
+        target.setDisplayName(nameTag);
+        target.getPermissionManager().addGroup(group.getPermissionGroup());
 
         goGroups.getScheduler().executeAsync(() -> {
             try {
