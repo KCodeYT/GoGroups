@@ -52,7 +52,7 @@ public class SetGroupCommand extends Command {
                 replace("&", "§");
 
         target.setNameTag(nameTag);
-        target.setDisplayName(nameTag);
+        target.setPlayerListName(nameTag);
         target.getPermissionManager().addGroup(group.getPermissionGroup());
 
         goGroups.getScheduler().executeAsync(() -> {
