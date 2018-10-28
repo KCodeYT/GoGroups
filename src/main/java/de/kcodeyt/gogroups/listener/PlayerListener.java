@@ -38,7 +38,6 @@ public class PlayerListener implements EventListener {
                         replace("&", "§");
 
                 player.setNameTag(nameTag);
-                player.setPlayerListName(nameTag);
                 player.getPermissionManager().addGroup(group.getPermissionGroup());
             }
 
