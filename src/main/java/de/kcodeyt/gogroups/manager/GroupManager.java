@@ -24,7 +24,7 @@ public class GroupManager {
 
     private File configFile;
 
-    public GroupManager(GoGroups goGroups) {
+    public GroupManager(GoGroups goGroups) throws InvalidConfigurationException {
         this.goGroups = goGroups;
         this.groupsConfig = new GroupsConfig();
         this.groups = new HashMap<>();
@@ -36,11 +36,7 @@ public class GroupManager {
             this.save();
         }
 
-        try {
-            this.groupsConfig.init(this.configFile);
-        } catch(InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
+        this.groupsConfig.init(this.configFile);
 
         for(GroupConfig groupConfig : this.groupsConfig.getGroups()) {
             String groupName = groupConfig.getName();
@@ -101,7 +97,7 @@ public class GroupManager {
             try {
                 this.getGroupsConfig().save(this.configFile);
             } catch(InvalidConfigurationException e) {
-                e.printStackTrace();
+                this.goGroups.getLogger().error("Error whilst saving the groups file: ", e);
             }
         });
     }

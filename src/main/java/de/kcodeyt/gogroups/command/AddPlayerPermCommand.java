@@ -49,7 +49,7 @@ public class AddPlayerPermCommand extends Command {
             try {
                 playerConfig.save();
             } catch(InvalidConfigurationException e) {
-                e.printStackTrace();
+                this.goGroups.getLogger().error("Error whilst initialising the file from " + target.getName() + ": ", e);
             }
         });
 

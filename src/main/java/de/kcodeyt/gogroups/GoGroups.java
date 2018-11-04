@@ -27,21 +27,31 @@ public class GoGroups extends Plugin {
     @Override
     public void onInstall() {
         this.getLogger().info("Initialize GoGroups.");
-        this.init();
-        this.getLogger().info("Successfully installed GoGroups!");
+
+        Exception exception = this.init();
+        if(exception != null)
+            this.getLogger().error("Error whilst installing GoGroups:", exception);
+        else
+            this.getLogger().info("Successfully installed GoGroups!");
     }
 
-    private void init() {
-        if(!this.getDataFolder().exists())
-            this.getDataFolder().mkdirs();
+    private Exception init() {
+        try {
+            if(!this.getDataFolder().exists())
+                this.getDataFolder().mkdirs();
 
-        this.groupManager = new GroupManager(this);
-        this.playerManager = new PlayerManager(this);
+            this.groupManager = new GroupManager(this);
+            this.playerManager = new PlayerManager(this);
 
-        this.successPrefix = "§6GoGroups §8§l»§r§a ";
-        this.failPrefix = "§6GoGroups §8§l»§r§c ";
+            this.successPrefix = "§6GoGroups §8§l»§r§a ";
+            this.failPrefix = "§6GoGroups §8§l»§r§c ";
 
-        this.registerListener(new PlayerListener(this));
+            this.registerListener(new PlayerListener(this));
+        } catch(Exception e) {
+            return e;
+        }
+
+        return null;
     }
 
     @Override

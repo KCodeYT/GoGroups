@@ -44,7 +44,7 @@ public class PlayerManager {
                 playerConfig.load(playerFile);
                 playerConfigConsumer.accept(playerConfig);
             } catch(InvalidConfigurationException e) {
-                e.printStackTrace();
+                this.goGroups.getLogger().error("Error whilst loading the file from " + playerName + ": ", e);
             }
         } else {
             playerConfig = new PlayerConfig(playerName, this.goGroups.getGroupManager().getGroupsConfig().getDefaultGroup(), new ArrayList<>());
@@ -53,7 +53,7 @@ public class PlayerManager {
                 playerConfig.init(playerFile);
                 playerConfigConsumer.accept(playerConfig);
             } catch(InvalidConfigurationException e) {
-                e.printStackTrace();
+                this.goGroups.getLogger().error("Error whilst initialising the file from " + playerName + ": ", e);
             }
         }
 
@@ -77,7 +77,7 @@ public class PlayerManager {
                 try {
                     playerConfig.save(new File(this.playerDirectory, playerName + ".yml"));
                 } catch(InvalidConfigurationException e) {
-                    e.printStackTrace();
+                    this.goGroups.getLogger().error("Error whilst initialising the file from " + playerName + ": ", e);
                 }
             });
         }
