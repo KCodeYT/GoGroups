@@ -13,9 +13,6 @@ import lombok.Getter;
 public class GoGroups extends Plugin {
 
     @Getter
-    private static GoGroups goGroupsInstance;
-
-    @Getter
     private GroupManager groupManager;
 
     @Getter
@@ -35,8 +32,6 @@ public class GoGroups extends Plugin {
     }
 
     private void init() {
-        GoGroups.goGroupsInstance = this;
-
         if(!this.getDataFolder().exists())
             this.getDataFolder().mkdirs();
 

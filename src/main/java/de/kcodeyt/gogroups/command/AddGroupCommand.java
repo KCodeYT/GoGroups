@@ -6,6 +6,7 @@ import io.gomint.command.CommandOutput;
 import io.gomint.command.CommandSender;
 import io.gomint.command.annotation.*;
 import io.gomint.command.validator.StringValidator;
+import io.gomint.plugin.injection.InjectPlugin;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -18,21 +19,23 @@ import java.util.Map;
 })
 public class AddGroupCommand extends Command {
 
+    @InjectPlugin
+    private GoGroups goGroups;
+
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
         CommandOutput commandOutput = new CommandOutput();
-        GoGroups goGroups = GoGroups.getGoGroupsInstance();
         String group = (String) argsMap.get("group");
 
         if(group == null || group.equals(""))
             return commandOutput.fail("Usage: /addgroup <group>");
 
-        if(goGroups.getGroupManager().groupExists(group))
-            return commandOutput.fail(goGroups.getFailPrefix() + " Group " + group + " already exists.");
+        if(this.goGroups.getGroupManager().groupExists(group))
+            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " already exists.");
 
-        goGroups.getGroupManager().createGroup(group, null, null, new ArrayList<>());
+        this.goGroups.getGroupManager().createGroup(group, null, null, new ArrayList<>());
 
-        return commandOutput.success(goGroups.getSuccessPrefix() + " Group " + group + " successfully created.");
+        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Group " + group + " successfully created.");
     }
 
 }

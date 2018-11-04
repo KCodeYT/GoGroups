@@ -14,6 +14,7 @@ public class GroupConfig extends YamlConfig {
         this.name = "Guest";
         this.chatFormat = "&8[&7Guest&8] &7%name% &8> &f%msg%";
         this.nameTag = "&8[&7Guest&8] &7%name%";
+        this.listName = "&8[&7Guest&8] &7%name%";
         this.permissions = new ArrayList<>();
     }
 
@@ -22,6 +23,8 @@ public class GroupConfig extends YamlConfig {
     private String chatFormat;
 
     private String nameTag;
+
+    private String listName;
 
     private List<String> permissions;
 

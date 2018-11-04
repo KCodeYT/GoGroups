@@ -33,7 +33,6 @@ public class GroupManager {
 
         if(!this.configFile.exists()) {
             this.groupsConfig.getGroups().add(new GroupConfig());
-
             this.save();
         }
 
@@ -47,9 +46,10 @@ public class GroupManager {
             String groupName = groupConfig.getName();
             String chatFormat = groupConfig.getChatFormat();
             String nameTag = groupConfig.getNameTag();
+            String listName = groupConfig.getListName();
             List<String> permissions = groupConfig.getPermissions();
 
-            this.createGroup(groupName, chatFormat, nameTag, permissions);
+            this.createGroup(groupName, chatFormat, nameTag, listName, permissions);
         }
     }
 
@@ -57,7 +57,7 @@ public class GroupManager {
         return this.getGroups().containsKey(groupName);
     }
 
-    public void createGroup(String groupName, String chatFormat, String nameTag, List<String> permissions) {
+    public void createGroup(String groupName, String chatFormat, String nameTag, String listName, List<String> permissions) {
         if(!this.groupExists(groupName)) {
             if(this.getGroupsConfig().getGroupConfig(groupName) == null) {
                 GroupConfig groupConfig = new GroupConfig();
@@ -73,6 +73,11 @@ public class GroupManager {
                         groupConfig.setNameTag(groupConfig.getNameTag().replace("Guest", groupName));
                     else
                         groupConfig.setNameTag(nameTag);
+
+                    if(listName == null)
+                        groupConfig.setListName(groupConfig.getListName().replace("Guest", groupName));
+                    else
+                        groupConfig.setListName(listName);
                 }
 
                 groupConfig.setPermissions(permissions);
@@ -87,7 +92,7 @@ public class GroupManager {
             for(String permission : permissions)
                 permissionGroup.setPermission(permission, true);
 
-            this.getGroups().put(groupName, new Group(groupName, chatFormat, nameTag, permissionGroup));
+            this.getGroups().put(groupName, new Group(groupName, chatFormat, nameTag, listName, permissionGroup));
         }
     }
 

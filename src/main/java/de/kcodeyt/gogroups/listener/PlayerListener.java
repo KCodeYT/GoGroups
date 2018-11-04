@@ -36,9 +36,12 @@ public class PlayerListener implements EventListener {
                 String nameTag = group.getNameTag().
                         replace("%name%", player.getName()).
                         replace("&", "§");
+                String listName = group.getListName().
+                        replace("%name%", player.getName()).
+                        replace("&", "§");
 
                 player.setNameTag(nameTag);
-                player.setPlayerListName(nameTag);
+                player.setPlayerListName(listName);
                 player.getPermissionManager().addGroup(group.getPermissionGroup());
             }
 

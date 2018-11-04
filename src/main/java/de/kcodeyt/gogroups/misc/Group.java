@@ -13,6 +13,8 @@ public class Group {
 
     private String nameTag;
 
+    private String listName;
+
     private io.gomint.permission.Group permissionGroup;
 
 }
