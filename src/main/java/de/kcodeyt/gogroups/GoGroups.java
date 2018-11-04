@@ -9,7 +9,7 @@ import io.gomint.plugin.Version;
 import lombok.Getter;
 
 @PluginName("GoGroups")
-@Version(major = 1, minor = 2)
+@Version(major = 1, minor = 3)
 public class GoGroups extends Plugin {
 
     @Getter

@@ -33,7 +33,7 @@ public class AddGroupCommand extends Command {
         if(this.goGroups.getGroupManager().groupExists(group))
             return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " already exists.");
 
-        this.goGroups.getGroupManager().createGroup(group, null, null, new ArrayList<>());
+        this.goGroups.getGroupManager().createGroup(group, null, null, null, new ArrayList<>());
 
         return commandOutput.success(this.goGroups.getSuccessPrefix() + " Group " + group + " successfully created.");
     }

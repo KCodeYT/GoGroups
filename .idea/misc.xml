@@ -4,6 +4,9 @@
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="io.gomint.command.annotation.Name" />
     </list>
+    <writeAnnotations>
+      <writeAnnotation name="io.gomint.plugin.injection.InjectPlugin" />
+    </writeAnnotations>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
