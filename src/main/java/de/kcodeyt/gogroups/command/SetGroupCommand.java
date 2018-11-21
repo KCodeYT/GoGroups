@@ -69,7 +69,7 @@ public class SetGroupCommand extends Command {
             }
         });
 
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Group " + group + " successfully set to player " + target.getName() + ".");
+        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Group " + group.getName() + " successfully set to player " + target.getName() + ".");
     }
 
 }
