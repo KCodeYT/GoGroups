@@ -2,7 +2,7 @@ package de.kcodeyt.gogroups.listener;
 
 import de.kcodeyt.gogroups.GoGroups;
 import de.kcodeyt.gogroups.config.PlayerConfig;
-import de.kcodeyt.gogroups.misc.Group;
+import de.kcodeyt.gogroups.misc.GroupEntry;
 import io.gomint.entity.EntityPlayer;
 import io.gomint.event.EventHandler;
 import io.gomint.event.EventListener;
@@ -12,9 +12,10 @@ import io.gomint.event.player.PlayerQuitEvent;
 
 import java.util.List;
 
+/** @noinspection unused*/
 public class PlayerListener implements EventListener {
 
-    private GoGroups goGroups;
+    private final GoGroups goGroups;
 
     public PlayerListener(GoGroups goGroups) {
         this.goGroups = goGroups;
@@ -22,30 +23,24 @@ public class PlayerListener implements EventListener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        EntityPlayer player = event.getPlayer();
-
+        final EntityPlayer player = event.getPlayer();
         this.goGroups.getPlayerManager().loadPlayer(player, playerConfig -> {
-            String groupName = playerConfig.getGroup();
-            List<String> permissions = playerConfig.getPermissions();
-
-            for(String permission : permissions)
+            final String groupName = playerConfig.getGroup();
+            final List<String> permissions = playerConfig.getPermissions();
+            for(final String permission : permissions)
                 player.getPermissionManager().setPermission(permission, true);
-
             if(this.goGroups.getGroupManager().groupExists(groupName)) {
-                Group group = this.goGroups.getGroupManager().getGroups().get(groupName);
-                String nameTag = group.getNameTag().
+                final GroupEntry group = this.goGroups.getGroupManager().getGroup(groupName);
+                player.setNameTag(group.getNameTag().
                         replace("%name%", player.getName()).
-                        replace("&", "§");
-                String listName = group.getListName().
+                        replace("&", "§"));
+                player.setPlayerListName(group.getListName().
                         replace("%name%", player.getName()).
-                        replace("&", "§");
-
-                player.setNameTag(nameTag);
-                player.setPlayerListName(listName);
-                player.getPermissionManager().addGroup(group.getPermissionGroup());
+                        replace("&", "§"));
+                player.getPermissionManager().addGroup(group.getGroup());
             }
 
-            if(player.hasPermission("*"))
+            if(player.getPermissionManager().hasPermission("*"))
                 player.setOp(true);
         });
     }
@@ -57,21 +52,17 @@ public class PlayerListener implements EventListener {
 
     @EventHandler
     public void onChat(PlayerChatEvent event) {
-        EntityPlayer player = event.getPlayer();
-        PlayerConfig playerConfig = this.goGroups.getPlayerManager().getPlayerConfig(player.getName());
-
-        String groupName = playerConfig.getGroup();
-
+        final EntityPlayer player = event.getPlayer();
+        final PlayerConfig playerConfig = this.goGroups.getPlayerManager().getPlayerConfig(player.getName());
+        final String groupName = playerConfig.getGroup();
         if(this.goGroups.getGroupManager().groupExists(groupName)) {
             event.setCancelled(true);
-
-            Group group = this.goGroups.getGroupManager().getGroups().get(groupName);
-            String chatFormat = group.getChatFormat().
+            final GroupEntry group = this.goGroups.getGroupManager().getGroup(groupName);
+            final String chatFormat = group.getChatFormat().
                     replace("%name%", player.getName()).
                     replace("%msg%", event.getText()).
                     replace("&", "§");
-
-            event.getRecipients().forEach(player1 -> player1.sendMessage(chatFormat));
+            event.getRecipients().forEach(recipient -> recipient.sendMessage(chatFormat));
         }
     }
 

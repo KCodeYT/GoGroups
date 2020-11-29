@@ -26,22 +26,16 @@ public class SetGroupChatCommand extends Command {
 
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
-        CommandOutput commandOutput = new CommandOutput();
-        String group = (String) argsMap.get("group");
-        String chatFormat = (String) argsMap.get("chatFormat");
-
+        final String group = (String) argsMap.get("group");
+        final String chatFormat = (String) argsMap.get("chatFormat");
         if(group == null || group.equals("") || chatFormat == null || chatFormat.equals(""))
-            return commandOutput.fail("Usage: /setgroupchat <group> <chatFormat>");
-
+            return CommandOutput.failure("Usage: /setgroupchat <group> <chatFormat>");
         if(!this.goGroups.getGroupManager().groupExists(group))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
-
-        GroupConfig groupConfig = this.goGroups.getGroupManager().getGroupsConfig().getGroupConfig(group);
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
+        final GroupConfig groupConfig = this.goGroups.getGroupManager().getGroupsConfig().getGroupConfig(group);
         groupConfig.setChatFormat(chatFormat);
-
         this.goGroups.getGroupManager().save();
-
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Chat format " + chatFormat + " successfully set to group " + group + ".");
+        return CommandOutput.successful(this.goGroups.getSuccessPrefix() + " Chat format " + chatFormat + " successfully set to group " + group + ".");
     }
 
 }

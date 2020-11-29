@@ -3,32 +3,27 @@ package de.kcodeyt.gogroups.manager;
 import de.kcodeyt.gogroups.GoGroups;
 import de.kcodeyt.gogroups.config.GroupConfig;
 import de.kcodeyt.gogroups.config.GroupsConfig;
-import de.kcodeyt.gogroups.misc.Group;
+import de.kcodeyt.gogroups.misc.GroupEntry;
 import io.gomint.config.InvalidConfigurationException;
+import io.gomint.permission.Group;
 import lombok.Getter;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GroupManager {
 
-    private GoGroups goGroups;
-
+    private final GoGroups goGroups;
     @Getter
-    private GroupsConfig groupsConfig;
-
-    @Getter
-    private Map<String, Group> groups;
-
-    private File configFile;
+    private final GroupsConfig groupsConfig;
+    private final Map<GroupConfig, Group> groups;
+    private final File configFile;
 
     public GroupManager(GoGroups goGroups) throws InvalidConfigurationException {
         this.goGroups = goGroups;
         this.groupsConfig = new GroupsConfig();
         this.groups = new HashMap<>();
-
         this.configFile = new File(this.goGroups.getDataFolder(), "groups.yml");
 
         if(!this.configFile.exists()) {
@@ -37,65 +32,61 @@ public class GroupManager {
         }
 
         this.groupsConfig.init(this.configFile);
+        this.groupsConfig.getGroups().forEach(this::createOfConfig);
+    }
 
-        for(GroupConfig groupConfig : this.groupsConfig.getGroups()) {
-            String groupName = groupConfig.getName();
-            String chatFormat = groupConfig.getChatFormat();
-            String nameTag = groupConfig.getNameTag();
-            String listName = groupConfig.getListName();
-            List<String> permissions = groupConfig.getPermissions();
+    private void createOfConfig(GroupConfig groupConfig) {
+        final String groupName = groupConfig.getName();
+        final String chatFormat = groupConfig.getChatFormat();
+        final String nameTag = groupConfig.getNameTag();
+        final String listName = groupConfig.getListName();
+        final List<String> permissions = groupConfig.getPermissions();
+        this.createGroup(groupName, chatFormat, nameTag, listName, permissions);
+    }
 
-            this.createGroup(groupName, chatFormat, nameTag, listName, permissions);
-        }
+    private Group createPermOfConfig(GroupConfig groupConfig) {
+        final Group permissionGroup = this.goGroups.getServer().getGroupManager().getOrCreateGroup(groupConfig.getName());
+        for(final String permission : groupConfig.getPermissions())
+            permissionGroup.setPermission(permission, true);
+        return permissionGroup;
     }
 
     public boolean groupExists(String groupName) {
-        return this.getGroups().containsKey(groupName);
+        return this.getGroup(groupName) != null;
     }
 
     public void createGroup(String groupName, String chatFormat, String nameTag, String listName, List<String> permissions) {
         if(!this.groupExists(groupName)) {
-            if(this.getGroupsConfig().getGroupConfig(groupName) == null) {
-                GroupConfig groupConfig = new GroupConfig();
+            if(this.groupsConfig.getGroupConfig(groupName) == null) {
+                final GroupConfig groupConfig = new GroupConfig();
                 groupConfig.setName(groupName);
-
-                {
-                    if(chatFormat == null)
-                        groupConfig.setChatFormat(groupConfig.getChatFormat().replace("Guest", groupName));
-                    else
-                        groupConfig.setChatFormat(chatFormat);
-
-                    if(nameTag == null)
-                        groupConfig.setNameTag(groupConfig.getNameTag().replace("Guest", groupName));
-                    else
-                        groupConfig.setNameTag(nameTag);
-
-                    if(listName == null)
-                        groupConfig.setListName(groupConfig.getListName().replace("Guest", groupName));
-                    else
-                        groupConfig.setListName(listName);
-                }
-
+                groupConfig.setChatFormat(Objects.requireNonNullElseGet(chatFormat, () -> groupConfig.getChatFormat().replace("Guest", groupName)));
+                groupConfig.setNameTag(Objects.requireNonNullElseGet(nameTag, () -> groupConfig.getNameTag().replace("Guest", groupName)));
+                groupConfig.setListName(Objects.requireNonNullElseGet(listName, () -> groupConfig.getListName().replace("Guest", groupName)));
                 groupConfig.setPermissions(permissions);
 
-                this.getGroupsConfig().getGroups().add(groupConfig);
-
+                this.groupsConfig.getGroups().add(groupConfig);
                 this.save();
             }
 
-            io.gomint.permission.Group permissionGroup = this.goGroups.getServer().getGroupManager().getOrCreateGroup(groupName);
-
-            for(String permission : permissions)
-                permissionGroup.setPermission(permission, true);
-
-            this.getGroups().put(groupName, new Group(groupName, chatFormat, nameTag, listName, permissionGroup));
+            final GroupConfig groupConfig = this.groupsConfig.getGroupConfig(groupName);
+            this.groups.put(groupConfig, this.createPermOfConfig(groupConfig));
         }
+    }
+
+    /** @noinspection WeakerAccess */
+    public List<GroupEntry> getGroups() {
+        return this.groups.entrySet().stream().map(entry -> new GroupEntry(this.groupsConfig.getGroupConfig(entry.getKey().getName()), entry.getValue())).collect(Collectors.toUnmodifiableList());
+    }
+
+    public GroupEntry getGroup(String groupName) {
+        return this.getGroups().stream().filter(groupEntry -> groupEntry.getName().equalsIgnoreCase(groupName)).findAny().orElse(null);
     }
 
     public void save() {
         this.goGroups.getScheduler().executeAsync(() -> {
             try {
-                this.getGroupsConfig().save(this.configFile);
+                this.groupsConfig.save(this.configFile);
             } catch(InvalidConfigurationException e) {
                 this.goGroups.getLogger().error("Error whilst saving the groups file: ", e);
             }
@@ -104,10 +95,9 @@ public class GroupManager {
 
     public void removeGroup(String groupName) {
         if(this.groupExists(groupName)) {
-            this.getGroups().remove(groupName);
-
-            this.getGroupsConfig().getGroups().remove(this.getGroupsConfig().getGroupConfig(groupName));
-
+            final GroupConfig groupConfig = this.groupsConfig.getGroupConfig(groupName);
+            this.groups.remove(groupConfig);
+            this.groupsConfig.getGroups().remove(groupConfig);
             this.save();
         }
     }

@@ -24,18 +24,13 @@ public class AddGroupCommand extends Command {
 
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
-        CommandOutput commandOutput = new CommandOutput();
-        String group = (String) argsMap.get("group");
-
+        final String group = (String) argsMap.get("group");
         if(group == null || group.equals(""))
-            return commandOutput.fail("Usage: /addgroup <group>");
-
+            return CommandOutput.failure("Usage: /addgroup <group>");
         if(this.goGroups.getGroupManager().groupExists(group))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " already exists.");
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Group " + group + " already exists.");
         this.goGroups.getGroupManager().createGroup(group, null, null, null, new ArrayList<>());
-
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Group " + group + " successfully created.");
+        return CommandOutput.successful(this.goGroups.getSuccessPrefix() + " Group " + group + " successfully created.");
     }
 
 }

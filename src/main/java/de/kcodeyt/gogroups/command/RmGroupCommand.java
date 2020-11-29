@@ -23,18 +23,13 @@ public class RmGroupCommand extends Command {
 
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
-        CommandOutput commandOutput = new CommandOutput();
-        String group = (String) argsMap.get("group");
-
+        final String group = (String) argsMap.get("group");
         if(group == null || group.equals(""))
-            return commandOutput.fail("Usage: /rmgroup <group>");
-
+            return CommandOutput.failure("Usage: /rmgroup <group>");
         if(!this.goGroups.getGroupManager().groupExists(group))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
         this.goGroups.getGroupManager().removeGroup(group);
-
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Group " + group + " successfully removed.");
+        return CommandOutput.successful(this.goGroups.getSuccessPrefix() + " Group " + group + " successfully removed.");
     }
 
 }

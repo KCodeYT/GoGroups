@@ -14,16 +14,13 @@ import java.util.function.Consumer;
 
 public class PlayerManager {
 
-    private GoGroups goGroups;
-
-    private Map<String, PlayerConfig> playerConfigs;
-
-    private File playerDirectory;
+    private final GoGroups goGroups;
+    private final Map<String, PlayerConfig> playerConfigs;
+    private final File playerDirectory;
 
     public PlayerManager(GoGroups goGroups) {
         this.goGroups = goGroups;
         this.playerConfigs = new HashMap<>();
-
         this.playerDirectory = new File(this.goGroups.getDataFolder(), "players");
     }
 
@@ -32,11 +29,9 @@ public class PlayerManager {
     }
 
     public void loadPlayer(EntityPlayer player, Consumer<PlayerConfig> playerConfigConsumer) {
-        String playerName = player.getName();
-
-        File playerFile = new File(this.playerDirectory, playerName + ".yml");
-
-        PlayerConfig playerConfig;
+        final String playerName = player.getName();
+        final File playerFile = new File(this.playerDirectory, playerName + ".yml");
+        final PlayerConfig playerConfig;
         if(this.playerExists(playerName)) {
             playerConfig = this.playerConfigs.get(playerName);
 
@@ -61,16 +56,13 @@ public class PlayerManager {
     }
 
     public void updatePlayer(EntityPlayer player, String groupName, List<String> permissions) {
-        String playerName = player.getName();
-
+        final String playerName = player.getName();
         if(this.playerExists(playerName)) {
-            PlayerConfig playerConfig = this.playerConfigs.get(playerName);
-
+            final PlayerConfig playerConfig = this.playerConfigs.get(playerName);
             if(groupName != null)
                 playerConfig.setGroup(groupName);
-
             if(permissions != null)
-                for(String permission : permissions)
+                for(final String permission : permissions)
                     playerConfig.getPermissions().add(permission);
 
             this.goGroups.getScheduler().executeAsync(() -> {

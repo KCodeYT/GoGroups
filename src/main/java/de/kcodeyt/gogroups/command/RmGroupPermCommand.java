@@ -25,26 +25,18 @@ public class RmGroupPermCommand extends Command {
 
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
-        CommandOutput commandOutput = new CommandOutput();
-        String group = (String) argsMap.get("group");
-        String permission = (String) argsMap.get("permission");
-
+        final String group = (String) argsMap.get("group");
+        final String permission = (String) argsMap.get("permission");
         if(group == null || group.equals("") || permission == null || permission.equals(""))
-            return commandOutput.fail("Usage: /rmgroupperm <group> <permission>");
-
+            return CommandOutput.failure("Usage: /rmgroupperm <group> <permission>");
         if(!this.goGroups.getGroupManager().groupExists(group))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
-
-        GroupConfig groupConfig = this.goGroups.getGroupManager().getGroupsConfig().getGroupConfig(group);
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
+        final GroupConfig groupConfig = this.goGroups.getGroupManager().getGroupsConfig().getGroupConfig(group);
         if(!groupConfig.getPermissions().contains(permission))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " does not has the permission " + permission + ".");
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Group " + group + " does not has the permission " + permission + ".");
         groupConfig.getPermissions().remove(permission);
-
         this.goGroups.getGroupManager().save();
-
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Permission " + permission + " successfully removed from group " + group + ".");
+        return CommandOutput.successful(this.goGroups.getSuccessPrefix() + " Permission " + permission + " successfully removed from group " + group + ".");
     }
 
 }

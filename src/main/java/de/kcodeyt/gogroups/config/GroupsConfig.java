@@ -10,20 +10,16 @@ import java.util.List;
 @Getter @Setter
 public class GroupsConfig extends YamlConfig {
 
+    private String defaultGroup;
+    private List<GroupConfig> groups;
+
     public GroupsConfig() {
         this.defaultGroup = "Guest";
         this.groups = new ArrayList<>();
     }
 
-    private String defaultGroup;
-
-    private List<GroupConfig> groups;
-
     public GroupConfig getGroupConfig(String groupName) {
-        for(GroupConfig groupConfig : this.getGroups())
-            if(groupConfig.getName().equals(groupName))
-                return groupConfig;
-        return null;
+        return this.groups.stream().filter(groupConfig -> groupConfig.getName().equalsIgnoreCase(groupName)).findAny().orElse(null);
     }
 
 }

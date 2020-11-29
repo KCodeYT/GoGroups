@@ -28,23 +28,16 @@ public class AddPlayerPermCommand extends Command {
 
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
-        CommandOutput commandOutput = new CommandOutput();
-        EntityPlayer target = (EntityPlayer) argsMap.get("target");
-        String permission = (String) argsMap.get("permission");
-
+        final EntityPlayer target = (EntityPlayer) argsMap.get("target");
+        final String permission = (String) argsMap.get("permission");
         if(target == null || permission == null || permission.equals(""))
-            return commandOutput.fail("Usage: /addplayerperm <target> <permission>");
-
+            return CommandOutput.failure("Usage: /addplayerperm <target> <permission>");
         if(!this.goGroups.getPlayerManager().playerExists(target.getName()))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Player " + target.getName() + " does not exists.");
-
-        PlayerConfig playerConfig = this.goGroups.getPlayerManager().getPlayerConfig(target.getName());
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Player " + target.getName() + " does not exists.");
+        final PlayerConfig playerConfig = this.goGroups.getPlayerManager().getPlayerConfig(target.getName());
         if(playerConfig.getPermissions().contains(permission))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Player " + target.getName() + " already has the permission " + permission + ".");
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Player " + target.getName() + " already has the permission " + permission + ".");
         playerConfig.getPermissions().add(permission);
-
         this.goGroups.getScheduler().executeAsync(() -> {
             try {
                 playerConfig.save();
@@ -52,8 +45,7 @@ public class AddPlayerPermCommand extends Command {
                 this.goGroups.getLogger().error("Error whilst initialising the file from " + target.getName() + ": ", e);
             }
         });
-
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Permission " + permission + " successfully added to player " + target.getName() + ".");
+        return CommandOutput.successful(this.goGroups.getSuccessPrefix() + " Permission " + permission + " successfully added to player " + target.getName() + ".");
     }
 
 }

@@ -2,7 +2,7 @@ package de.kcodeyt.gogroups.command;
 
 import de.kcodeyt.gogroups.GoGroups;
 import de.kcodeyt.gogroups.config.PlayerConfig;
-import de.kcodeyt.gogroups.misc.Group;
+import de.kcodeyt.gogroups.misc.GroupEntry;
 import io.gomint.command.Command;
 import io.gomint.command.CommandOutput;
 import io.gomint.command.CommandSender;
@@ -29,38 +29,26 @@ public class SetGroupCommand extends Command {
 
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
-        CommandOutput commandOutput = new CommandOutput();
-        EntityPlayer target = (EntityPlayer) argsMap.get("target");
-        String groupName = (String) argsMap.get("group");
-
+        final EntityPlayer target = (EntityPlayer) argsMap.get("target");
+        final String groupName = (String) argsMap.get("group");
         if(target == null || groupName == null || groupName.equals(""))
-            return commandOutput.fail("Usage: /setgroup <target> <group>");
-
+            return CommandOutput.failure("Usage: /setgroup <target> <group>");
         if(!this.goGroups.getPlayerManager().playerExists(target.getName()))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Player " + target.getName() + " does not exists.");
-
-        PlayerConfig playerConfig = this.goGroups.getPlayerManager().getPlayerConfig(target.getName());
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Player " + target.getName() + " does not exists.");
+        final PlayerConfig playerConfig = this.goGroups.getPlayerManager().getPlayerConfig(target.getName());
         if(!this.goGroups.getGroupManager().groupExists(groupName))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + groupName + " does not exists.");
-
-        Group currentGroup = this.goGroups.getGroupManager().getGroups().get(playerConfig.getGroup());
-        target.getPermissionManager().removeGroup(currentGroup.getPermissionGroup());
-
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Group " + groupName + " does not exists.");
+        final GroupEntry currentGroup = this.goGroups.getGroupManager().getGroup(playerConfig.getGroup());
+        target.getPermissionManager().removeGroup(currentGroup.getGroup());
         playerConfig.setGroup(groupName);
-
-        Group group = this.goGroups.getGroupManager().getGroups().get(groupName);
-        String nameTag = group.getNameTag().
+        final GroupEntry group = this.goGroups.getGroupManager().getGroup(groupName);
+        target.setNameTag(group.getNameTag().
                 replace("%name%", target.getName()).
-                replace("&", "§");
-        String listName = group.getListName().
+                replace("&", "§"));
+        target.setPlayerListName(group.getListName().
                 replace("%name%", target.getName()).
-                replace("&", "§");
-
-        target.setNameTag(nameTag);
-        target.setPlayerListName(listName);
-        target.getPermissionManager().addGroup(group.getPermissionGroup());
-
+                replace("&", "§"));
+        target.getPermissionManager().addGroup(group.getGroup());
         this.goGroups.getScheduler().executeAsync(() -> {
             try {
                 playerConfig.save();
@@ -68,8 +56,7 @@ public class SetGroupCommand extends Command {
                 this.goGroups.getLogger().error("Error whilst initialising the file from " + target.getName() + ": ", e);
             }
         });
-
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Group " + group.getName() + " successfully set to player " + target.getName() + ".");
+        return CommandOutput.successful(this.goGroups.getSuccessPrefix() + " Group " + group.getName() + " successfully set to player " + target.getName() + ".");
     }
 
 }

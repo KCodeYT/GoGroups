@@ -26,22 +26,16 @@ public class SetGroupNametagCommand extends Command {
 
     @Override
     public CommandOutput execute(CommandSender commandSender, String s, Map<String, Object> argsMap) {
-        CommandOutput commandOutput = new CommandOutput();
-        String group = (String) argsMap.get("group");
-        String nameTag = (String) argsMap.get("nameTag");
-
+        final String group = (String) argsMap.get("group");
+        final String nameTag = (String) argsMap.get("nameTag");
         if(group == null || group.equals("") || nameTag == null || nameTag.equals(""))
-            return commandOutput.fail("Usage: /setgroupnametag <group> <nameTag>");
-
+            return CommandOutput.failure("Usage: /setgroupnametag <group> <nameTag>");
         if(!this.goGroups.getGroupManager().groupExists(group))
-            return commandOutput.fail(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
-
-        GroupConfig groupConfig = this.goGroups.getGroupManager().getGroupsConfig().getGroupConfig(group);
+            return CommandOutput.failure(this.goGroups.getFailPrefix() + " Group " + group + " does not exists.");
+        final GroupConfig groupConfig = this.goGroups.getGroupManager().getGroupsConfig().getGroupConfig(group);
         groupConfig.setNameTag(nameTag);
-
         this.goGroups.getGroupManager().save();
-
-        return commandOutput.success(this.goGroups.getSuccessPrefix() + " Name tag " + nameTag + " successfully set to group " + group + ".");
+        return CommandOutput.successful(this.goGroups.getSuccessPrefix() + " Name tag " + nameTag + " successfully set to group " + group + ".");
     }
 
 }
